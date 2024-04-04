@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Profile from "@components/profile";
 
 const MyProfile = () => {
+  const router = useRouter();
   const { data: session } = useSession();
 
   const [posts, setPosts] = useState([]);
@@ -22,15 +23,22 @@ const MyProfile = () => {
     if (session?.user.id) fetchPosts();
   }, []);
 
-  const hanldeEdit = async () => {};
-  const handleDelete = async () => {};
+  const handleEdit = (post) => {
+    router.push(`/update-prompt?id=${post._id}`);
+  };
+
+  const handleDelete = async (post) => {
+    const hasConfirmed = confirm(
+      "Are you sure you want to delete this prompt?"
+    );
+  };
 
   return (
     <Profile
       name="My"
       desc="Welcome to your personalized profile page"
       data={posts}
-      hanldeEdit={hanldeEdit}
+      handleEdit={handleEdit}
       handleDelete={handleDelete}
     />
   );

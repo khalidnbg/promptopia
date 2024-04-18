@@ -5,16 +5,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import Form from "@components/Form";
 
-const editePrompt = () => {
+const UpdatePrompt = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const promptId = searchParams.get("id");
 
-  const [submiting, setSubmiting] = useState(false);
-  const [post, setPost] = useState({
-    prompt: "",
-    tag: "",
-  });
+  const [post, setPost] = useState({ prompt: "", tag: "" });
+  const [submitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const getPromptDetails = async () => {
@@ -32,9 +29,9 @@ const editePrompt = () => {
 
   const updatePrompt = async (e) => {
     e.preventDefault();
-    setSubmiting(true);
+    setIsSubmitting(true);
 
-    if (!promptId) return alert("Prompt id not found !");
+    if (!promptId) return alert("Missing PromptId!");
 
     try {
       const response = await fetch(`/api/prompt/${promptId}`, {
@@ -51,7 +48,7 @@ const editePrompt = () => {
     } catch (error) {
       console.log(error);
     } finally {
-      setSubmiting(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -60,10 +57,10 @@ const editePrompt = () => {
       type="Edit"
       post={post}
       setPost={setPost}
-      submiting={submiting}
+      submitting={submitting}
       handleSubmit={updatePrompt}
     />
   );
 };
 
-export default editePrompt;
+export default UpdatePrompt;

@@ -1,19 +1,22 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
+import { useRouter, useSearchParams } from "next/navigation";
 
-const Form = dynamic(() => import("@components/Form"));
+import Form from "@components/Form";
 
-const UpdatePrompt = () => {
+const editePrompt = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const promptId = searchParams.get("id");
 
-  const [post, setPost] = useState({ prompt: "", tag: "" });
-  const [submitting, setIsSubmitting] = useState(false);
+  const [submiting, setSubmiting] = useState(false);
+  const [post, setPost] = useState({
+    prompt: "",
+    tag: "",
+  });
 
   useEffect(() => {
-    const promptId = router.query.id;
-    if (!promptId) return;
-
     const getPromptDetails = async () => {
       const response = await fetch(`/api/prompt/${promptId}`);
       const data = await response.json();
@@ -24,15 +27,14 @@ const UpdatePrompt = () => {
       });
     };
 
-    getPromptDetails();
-  }, [router.query.id]);
+    if (promptId) getPromptDetails();
+  }, [promptId]);
 
   const updatePrompt = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setSubmiting(true);
 
-    const promptId = router.query.id;
-    if (!promptId) return alert("Missing PromptId!");
+    if (!promptId) return alert("Prompt id not found !");
 
     try {
       const response = await fetch(`/api/prompt/${promptId}`, {
@@ -49,7 +51,7 @@ const UpdatePrompt = () => {
     } catch (error) {
       console.log(error);
     } finally {
-      setIsSubmitting(false);
+      setSubmiting(false);
     }
   };
 
@@ -58,10 +60,10 @@ const UpdatePrompt = () => {
       type="Edit"
       post={post}
       setPost={setPost}
-      submitting={submitting}
+      submiting={submiting}
       handleSubmit={updatePrompt}
     />
   );
 };
 
-export default UpdatePrompt;
+export default editePrompt;

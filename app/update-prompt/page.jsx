@@ -1,19 +1,19 @@
-"use client";
-
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 
-import Form from "@components/Form";
+const Form = dynamic(() => import("@components/Form"));
 
 const UpdatePrompt = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const promptId = searchParams.get("id");
 
   const [post, setPost] = useState({ prompt: "", tag: "" });
   const [submitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
+    const promptId = router.query.id;
+    if (!promptId) return;
+
     const getPromptDetails = async () => {
       const response = await fetch(`/api/prompt/${promptId}`);
       const data = await response.json();
@@ -24,13 +24,14 @@ const UpdatePrompt = () => {
       });
     };
 
-    if (promptId) getPromptDetails();
-  }, [promptId]);
+    getPromptDetails();
+  }, [router.query.id]);
 
   const updatePrompt = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    const promptId = router.query.id;
     if (!promptId) return alert("Missing PromptId!");
 
     try {
